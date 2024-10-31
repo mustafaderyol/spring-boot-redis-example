@@ -1,34 +1,40 @@
 package com.mderyol.demo.redis.controller;
 
 import com.mderyol.demo.redis.model.User;
+import com.mderyol.demo.redis.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor
 public class UserController {
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final UserService userService;
 
     @PostMapping
-    public void addUser(@RequestBody User user) {
-        redisTemplate.opsForValue().set(user.getId(), user);
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User createdUser = userService.createUser(user);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable String id) {
-        return (User) redisTemplate.opsForValue().get(id);
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+        return user != null ? new ResponseEntity<>(user, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return Objects.requireNonNull(redisTemplate.keys("*")).stream()
-                .map(key -> (User) redisTemplate.opsForValue().get(key))
-                .collect(Collectors.toList());
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        user.setId(id);
+        User updatedUser = userService.updateUser(user);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

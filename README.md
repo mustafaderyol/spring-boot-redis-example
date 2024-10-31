@@ -20,27 +20,11 @@ Redis is an open-source data structure server that is commonly used as a databas
     
     This setting determines the maximum time to wait (in milliseconds) for a connection to the Redis server. If a connection cannot be established within this timeframe, an error is returned. It is important to choose an appropriate value for your application's performance; a very short timeout may lead to connection errors, while a very long timeout could negatively impact your application's response time.
 
-### Pool Settings (for Lettuce)
+**@Cacheable:** Checks for previous results; if not found, process the data and cache it.
 
-Lettuce is a library that allows you to establish asynchronous connections with Redis. The following settings manage the connection pool:
-- **spring.data.redis.lettuce.pool.max-idle=8**
+**@CachePut:** Adds or updates results in the cache every time the method is called.
 
-    This setting specifies the maximum number of idle connections that can be maintained in the pool. Having too many idle connections can lead to resource wastage. A lower value may reduce memory consumption.
-
-
-- **spring.data.redis.lettuce.pool.min-idle=0**
-
-    This setting indicates the minimum number of idle connections that must be maintained in the pool. When set to 0, there is no requirement for idle connections in the pool. However, setting a specific value can reduce connection establishment time.
-
-
-- **spring.data.redis.lettuce.pool.max-active=8**
-  
-    This setting defines the maximum number of active connections (in use) allowed at the same time. Requests that exceed this limit will have to wait. A lower value allows fewer concurrent requests, which can impact performance.
-
-
-- **spring.data.redis.lettuce.pool.max-wait=10000**
-
-    This setting specifies the maximum time to wait (in milliseconds) for an idle connection to become available when none are present in the pool. If a connection is not available within the specified time, an error is returned. A very high value can negatively affect your application's response time.
+**@CacheEvict:** Removes items from the specified cache.
 
 ## To run the project:
 
